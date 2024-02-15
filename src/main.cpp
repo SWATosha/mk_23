@@ -2,43 +2,33 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
 
+void setup() {
 
-constexpr uint16_t PERIOD_MS{1'000};
+rcc_periph_clock_enable(RCC_GPIOA);
+gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9 | GPIO10);
+gpio_set_af(GPIOA,GPIO_AF7, GPIO9 | GPIO10);
 
-void blink_LED() {
-    if (timer_get_counter(TIM1) < (PERIOD_MS / 2)) gpio_set(GPIOE, GPIO9);
-    else gpio_clear(GPIOE, GPIO9);
+rcc_periph_clock_enable(RCC_USART1);
+usart_set_baudrate(USART1, 115200);
+usart_set_databits(USART1, 8);
+usart_set_stopbits(USART1, USART_STOPBITS_1);
+usart_set_parity(USART1, USART_PARITY_NONE);
+usart_set_mode(USART1, USART_MODE_TX_RX);
+usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+usart_enable(USART1);
+
 }
 
-void LED_gpio_setup() {
-    rcc_periph_clock_enable(RCC_GPIOE);
-    gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO9 | GPIO11 | GPIO14);
-}
-
-void timer_setup() {
-    rcc_periph_clock_enable(RCC_TIM1);
-    timer_set_prescaler(TIM1, rcc_get_timer_clk_freq(TIM1) / (PERIOD_MS - 1));
-    timer_set_period(TIM1, PERIOD_MS - 1);
-
-    timer_enable_counter(TIM1);
+void loop() {
+    usart_send_blocking(USART1, 0x55);
+    
 }
 
 int main () {
 
-    //Настройка тактовой подсистемы
-    rcc_clock_setup_pll(&rcc_hsi_configs[RCC_CLOCK_HSI_64MHZ]);
+    setup();
 
-
-    //Настройка порта ввода-вывода
-    //rcc_periph_clock_enable(RCC_GPIOE);
-    //gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO9);
-
-    LED_gpio_setup();
-    timer_setup();
     while (true) {
-        //Переключение светодиода
-        //gpio_toggle(GPIOE, GPIO9);
-        //for (volatile uint32_t i = 0; i < 500'000; ++i);
-        blink_LED();
+        loop();
     }
 }
