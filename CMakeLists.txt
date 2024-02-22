@@ -4,7 +4,7 @@ set(CMAKE_TOOLCHAIN_FILE cmake/arm-none-eabi-gcc.cmake)
 
 
 #================================================================================
-project(mk_23 LANGUAGES CXX C ASM)
+project(mk_23copy LANGUAGES CXX C ASM)
 set(DEVICE stm32f303vc)
 
 include(libopencm3)
@@ -34,4 +34,3 @@ string(CONCAT PROG_TARGET ${LOCM3_DEVICE_SERIE} x)
 include(oocd_flash_script)
 
 install(CODE ${OOCD_FLASH_SCRIPT})
-
