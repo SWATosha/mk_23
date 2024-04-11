@@ -4,7 +4,9 @@ set(CMAKE_TOOLCHAIN_FILE cmake/arm-none-eabi-gcc.cmake)
 
 
 # ================================================================================
+set(ENV{CMAKE_EXPORT_COMPILE_COMMANDS} 1)
 project(mk_23copy LANGUAGES CXX C ASM)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(DEVICE stm32f303vc)
 
 include(libopencm3)
